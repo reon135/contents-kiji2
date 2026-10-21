@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>コンテンツ販売の埋め方</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap">
+<style>
+/* layout: 紙面風の1カラム記事。上に固定ヘッダー(進捗バー付き)、右から目次ドロワー。2〜3行ごとの塊で余白を取る */
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --paper:#ffffff; --fg:#1b2230; --muted:#5a6475; --line:#e3e7ee;
+  --tint:#f4f7fb; --accent:#1c4fc4; --mk:rgba(255,224,0,.7); --ul:#1b2230;
+  --red:#d42a3c; --bgh:#e3edff; --bgh-fg:#123a8f;
+  --hdr:rgba(255,255,255,.96); --shadow:0 8px 28px rgba(20,30,60,.16);
+  --fs:16.5px; --hh:56px;
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:var(--fs);line-height:1.9;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--hdr)}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hdr);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:6px;max-width:720px;margin:0 auto;height:var(--hh);padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+.tbtn{flex:none;min-width:40px;height:40px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);font-family:var(--f-display);font-weight:700;font-size:.82rem;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.tbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.now{flex:1;min-width:0;line-height:1.3;padding:0 4px}
+.now b{display:block;font-family:var(--f-display);font-weight:800;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now small{display:block;font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{position:absolute;left:0;right:0;bottom:-1px;height:3px;background:transparent}
+.bar i{display:block;height:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+
+/* hero */
+.hero{background:#fff;color:var(--fg);border-bottom:1px solid var(--line)}
+.hero-in{max-width:720px;margin:0 auto;padding-block:40px 30px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+.hero .eb{font-family:var(--f-display);font-weight:700;font-size:.78rem;letter-spacing:.16em;color:var(--accent)}
+.hero h1{font-family:var(--f-display);font-weight:900;font-size:clamp(1.65rem,7vw,2.5rem);line-height:1.4;margin:.6em 0 .7em;text-wrap:balance}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 58%,var(--mk) 58%)}
+.hero .lead{margin:0 0 1.2em;font-size:.92rem;line-height:1.85;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px;padding:0;list-style:none}
+.meta li{font-size:.74rem;padding:3px 10px;border:1px solid var(--line);background:var(--tint);border-radius:99px}
+.keys-l{font-family:var(--f-display);font-weight:700;font-size:.8rem;margin:0 0 8px}
+.keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.key{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 10px 11px;background:var(--tint);border:1px solid var(--line);border-radius:6px;color:var(--fg)}
+.key small{font-size:.68rem;color:var(--accent);font-family:var(--f-display);font-weight:700;letter-spacing:.08em}
+.key b{font-family:var(--f-display);font-weight:900;font-size:1.05rem;line-height:1.3}
+.key span{font-size:.7rem;line-height:1.5;color:var(--muted)}
+
+/* paper */
+.paper{max-width:720px;margin:0 auto;background:var(--paper);padding-block:8px 40px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+@media (min-width:760px){.paper{border-inline:1px solid var(--line)}}
+.toc{padding-top:34px}
+.toc h2{font-family:var(--f-display);font-weight:900;font-size:1.2rem;margin:0 0 .6em}
+.toc ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.toc li button{display:flex;gap:12px;align-items:baseline;width:100%;text-align:left;padding:11px 2px;background:none;border:0;border-bottom:1px solid var(--line);min-height:44px}
+.tn{font-family:var(--f-display);font-weight:900;color:var(--accent);font-size:.9rem;font-variant-numeric:tabular-nums}
+.tt{font-weight:500;font-size:.93rem;line-height:1.6}
+.toc li button:hover .tt{text-decoration:underline}
+
+.chap{padding-top:3.4rem;scroll-margin-top:calc(var(--hh) + env(safe-area-inset-top,0px) + 6px)}
+.chead{margin-bottom:1.6em;padding-bottom:.9em;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-display);font-weight:700;font-size:.74rem;letter-spacing:.2em;color:var(--accent)}
+.chap h2{font-family:var(--f-display);font-weight:900;font-size:calc(var(--fs)*1.5);line-height:1.45;margin:.25em 0 0;text-wrap:balance}
+.chap h3{font-family:var(--f-display);font-weight:800;font-size:calc(var(--fs)*1.16);line-height:1.55;margin:2.8em 0 1em;text-wrap:balance;scroll-margin-top:calc(var(--hh) + env(safe-area-inset-top,0px) + 6px)}
+.chap h3::before{content:"▶ ";color:var(--accent);font-size:.8em}
+.chap p{margin:0 0 1.55em;line-height:2.05;letter-spacing:.02em;overflow-wrap:anywhere}
+
+/* emphasis */
+.mk{color:inherit;font-weight:700;background:linear-gradient(transparent 56%,var(--mk) 56%) no-repeat 0 0/100% 100%;transition:background-size .9s ease;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .08em}
+.mk.pend{background-size:0% 100%}
+.ul{text-decoration:underline;text-decoration-color:var(--ul);text-decoration-thickness:2px;text-underline-offset:.28em;font-weight:500}
+.rd{color:var(--red);font-weight:700}
+.bg{background:var(--bgh);color:var(--bgh-fg);font-weight:700;padding:.02em .4em;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+.chap p.big{font-family:var(--f-display);font-weight:900;font-size:calc(var(--fs)*1.3);line-height:1.6;margin:2.2em 0;padding:.95em 0 .85em;border-top:3px solid var(--accent);border-bottom:1px solid var(--line);text-wrap:balance;letter-spacing:.01em}
+.callout{margin:1.9em 0;padding:1em 1.1em .5em;background:var(--tint);border:1px solid var(--line);border-radius:6px}
+.callout p{margin:0 0 .9em !important;font-size:.96em;line-height:1.9 !important}
+.co-label{font-family:var(--f-display);font-weight:800;color:var(--accent);margin-bottom:.5em}
+.cards{display:grid;gap:10px;margin:1.7em 0}
+.card{display:flex;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:6px;background:var(--paper)}
+.cnum{flex:none;min-width:3rem;text-align:center;font-family:var(--f-display);font-weight:900;font-size:1.7rem;line-height:1;color:var(--accent)}
+.cnum.s{font-size:.95rem;line-height:1.3}
+.card div{display:flex;flex-direction:column;min-width:0;line-height:1.55}
+.card b{font-family:var(--f-display);font-weight:800;font-size:1.02em}
+.card span:not(.cnum){font-size:.84em;color:var(--muted);line-height:1.7}
+.flow{list-style:none;margin:1.9em 0;padding:0}
+.flow li{position:relative;padding:.75em 1em;background:var(--tint);border:1px solid var(--line);border-radius:6px;font-size:.95em;line-height:1.7}
+.flow li+li{margin-top:28px}
+.flow li+li::before{content:"▼";position:absolute;left:1.1em;top:-24px;color:var(--accent);font-size:.8em}
+.tbl{overflow-x:auto;margin:1.9em 0;border:1px solid var(--line);border-radius:6px}
+.tbl table{border-collapse:collapse;width:100%;min-width:430px;font-size:.88em;line-height:1.6}
+.tbl th{background:var(--tint);text-align:left;font-family:var(--f-display);font-weight:800;color:var(--accent)}
+.tbl th,.tbl td{padding:.7em .9em;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:0}
+.next{display:flex;flex-direction:column;gap:2px;width:100%;margin-top:3rem;padding:.9em 1.1em;text-align:left;background:var(--tint);border:1px solid var(--line);border-radius:6px}
+.next span{font-size:.74rem;color:var(--accent);font-family:var(--f-display);font-weight:700;letter-spacing:.06em}
+.next b{font-family:var(--f-display);font-weight:800;line-height:1.5}
+.end{margin-top:3.6rem;padding-top:1.4rem;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px}
+.end .tbtn{height:44px;padding:0 16px}
+
+/* drawer */
+.ov{position:fixed;inset:0;z-index:40;background:rgba(5,10,25,.5);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.ov.on{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;bottom:0;right:0;z-index:50;width:min(88vw,380px);background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(102%);visibility:hidden;transition:transform .28s ease,visibility .28s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.on{transform:none;visibility:visible}
+.d-head{display:flex;align-items:center;justify-content:space-between;padding:12px 8px 10px 18px;border-bottom:1px solid var(--line)}
+.d-head b{font-family:var(--f-display);font-weight:900;font-size:1.05rem}
+.d-body{overflow-y:auto;flex:1;padding:6px max(12px,env(safe-area-inset-right,0px)) 24px 12px;overscroll-behavior:contain}
+.d-body ul{list-style:none;margin:0;padding:0}
+.chb{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;padding:10px 8px;background:none;border:0;border-radius:6px;min-height:44px}
+.chb .tt{font-weight:700;font-size:.9rem}
+.subs{margin:0 0 6px 34px !important;border-left:1px solid var(--line)}
+.sub{display:block;width:100%;text-align:left;padding:6px 10px;background:none;border:0;font-size:.8rem;color:var(--muted);line-height:1.5;min-height:34px}
+li.active>.chb{background:var(--bgh);color:var(--bgh-fg)}
+li.active>.chb .tn{color:inherit}
+
+/* floating */
+.fab{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);display:grid;place-items:center;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .25s,transform .25s,visibility .25s}
+.fab.on{opacity:1;visibility:visible;transform:none}
+.fab svg{width:20px;height:20px;fill:none;stroke:var(--fg);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.resume{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:35;width:min(calc(100vw - 32px),420px);transform:translate(-50%,20px);opacity:0;visibility:hidden;transition:opacity .3s,transform .3s,visibility .3s;background:var(--paper);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow);font-size:.85rem;line-height:1.6}
+.resume.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.resume p{margin:0 0 8px}
+.resume div{display:flex;gap:8px}
+.resume button{flex:1;min-height:40px;border-radius:6px;border:1px solid var(--line);background:var(--paper);font-weight:700;font-size:.82rem}
+.resume button.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms !important}.mk{transition:none}}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <div class="top-in">
+    <button class="tbtn" type="button" id="openToc" aria-label="目次を開く"><svg viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14"/></svg>目次</button>
+    <div class="now"><b id="nowTitle">コンテンツ販売の埋め方</b><small id="nowSub">約28分で読めます</small></div>
+    <button class="tbtn" type="button" id="fsDown" aria-label="文字を小さくする">A−</button>
+    <button class="tbtn" type="button" id="fsUp" aria-label="文字を大きくする">A＋</button>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div class="eb">コンテンツ販売の基礎 ＜続き＞</div>
+    <h1>Threads×コンテンツ販売<br>ギャップの<em>埋め方</em>を決める</h1>
+    <p class="lead">What（何を）の次は、How（どうやって）。商品のフォーマット、販売プラットフォーム、労力と知識の境界線、価格の4つを決めます。</p>
+    <ul class="meta"><li>約28分で読めます</li><li>全11章</li><li>スマホで読みやすい記事形式</li></ul>
+    <p class="keys-l">▼ この記事で決める4つ（タップでその章へ）</p>
+    <div class="keys">
+      <button class="key" type="button" data-go="c4"><small>1</small><b>フォーマット</b><span>何で渡すか</span></button>
+      <button class="key" type="button" data-go="c5"><small>2</small><b>プラットフォーム</b><span>どこで売るか</span></button>
+      <button class="key" type="button" data-go="c9"><small>3</small><b>労力と知識の境界線</b><span>どこまで関与するか</span></button>
+      <button class="key" type="button" data-go="c10"><small>4</small><b>価格</b><span>いくらで売るか</span></button>
+    </div>
+  </div>
+  </section>
+
+<main class="paper" id="paper">
+  <nav class="toc" id="toc" aria-label="目次">
+    <h2>【目次】</h2>
+    <ol>
+<li><button type="button" data-go="c1"><span class="tn">01</span><span class="tt">前回のおさらい</span></button></li>
+<li><button type="button" data-go="c2"><span class="tn">02</span><span class="tt">WhatとHowの違い</span></button></li>
+<li><button type="button" data-go="c3"><span class="tn">03</span><span class="tt">埋め方で決める4種類</span></button></li>
+<li><button type="button" data-go="c4"><span class="tn">04</span><span class="tt">①商品のフォーマットを決める</span></button></li>
+<li><button type="button" data-go="c5"><span class="tn">05</span><span class="tt">②販売プラットフォームを決める</span></button></li>
+<li><button type="button" data-go="c6"><span class="tn">06</span><span class="tt">公式LINEを選びオプチャを避ける理由</span></button></li>
+<li><button type="button" data-go="c7"><span class="tn">07</span><span class="tt">固定ポストにnoteを貼るだけではダメ？</span></button></li>
+<li><button type="button" data-go="c8"><span class="tn">08</span><span class="tt">①②は早く、③④は後でいい理由</span></button></li>
+<li><button type="button" data-go="c9"><span class="tn">09</span><span class="tt">③労力と知識の境界線を決める</span></button></li>
+<li><button type="button" data-go="c10"><span class="tn">10</span><span class="tt">④価格を決める</span></button></li>
+<li><button type="button" data-go="c11"><span class="tn">11</span><span class="tt">まとめと次回予告</span></button></li>
+    </ol>
+  </nav>
+
+<section class="chap" id="c1" data-title="前回のおさらい">
+<header class="chead"><span class="eyebrow">CHAPTER 01</span><h2>前回のおさらい</h2></header>
+<p>Threads×コンテンツ販売、ギャップの埋め方を決める、ということで、さらに続きをお話をしていきましょう。</p>
+<p>前回までのおさらいですね。</p>
+<p>覚えてますかね。</p>
+<p>まず<span class="bg">ギャップを決める</span>ということでした。その次に<span class="bg">埋め方を決める</span>とお話をしました。なのでAとB、この2つがあるっていう話をしましたよね。</p>
+<p>さらにこのAのギャップを決めるという、この中には、</p>
+<div class="cards"><div class="card"><span class="cnum">1</span><div><b>本能を決める</b><span></span></div></div><div class="card"><span class="cnum">2</span><div><b>緊急性を決める</b><span></span></div></div><div class="card"><span class="cnum">3</span><div><b>範囲を決める</b><span></span></div></div></div>
+<p>この3つをさらに決めるということでしたね。</p>
+<p>そして次はですね、<mark class="mk">Bの埋め方を決める</mark>。今回はこれについて具体的にお話をしていきましょう。</p>
+<p>最初の方に触れましたが、ビジネスというのは現実と理想のギャップを埋めることでしたよね。現状と理想があって、その間にあるギャップを埋めることでした。</p>
+<p>そしてこのギャップを埋めるもの、<mark class="mk">イコールそれ自体が商品</mark>。つまり、埋め方イコール商品そのものなんですね。</p>
+<button class="next" type="button" data-go="c2"><span>次の章 ▶</span><b>WhatとHowの違い</b></button>
+</section>
+<section class="chap" id="c2" data-title="WhatとHowの違い">
+<header class="chead"><span class="eyebrow">CHAPTER 02</span><h2>WhatとHowの違い</h2></header>
+<p>そこで、もっと皆さんに分かりやすく解説をしていきましょう。</p>
+<p>何が言いたいかっていうと、これまでの本能を決める、緊急性を決める、この範囲を決めるというギャップは、すべて<mark class="mk">何を解決するのか</mark>の分野になります。</p>
+<p>何をの部分ですね。</p>
+<p>例えば本能の何を満たすのか、何のタイミングを狙うのか、緊急性を上げていくのか、何のプロミスを決めていくのか。</p>
+<p>つまり<span class="bg">What（ワット）</span>ですよね、何をの部分。</p>
+<p>さて、これから話す埋め方の商品については、<mark class="mk">どうやって解決するか</mark>の分野になります。</p>
+<p>どの形式で売るのか、どこの販売先で売るのか、サポートはするべきなのか、いくらで売るのか。つまり<span class="bg">How（ハウ）</span>の部分になります。</p>
+<div class="cards"><div class="card"><span class="cnum s">What</span><div><b>何を解決するか</b><span>顧客が持っているギャップ。本能・緊急性・範囲</span></div></div><div class="card"><span class="cnum s">How</span><div><b>どうやって解決するか</b><span>ギャップの埋め方。商品の提供のしかた</span></div></div></div>
+<p>だからワットっていうのは、顧客が持っているギャップは何かということ。つまり理想と現実の間のギャップのことです。</p>
+<p>そして僕が今から話すハウっていうのは、そのギャップをどうやって埋めるのか。その商品はどうやって提供するのか、という話になりますね。</p>
+<p class="big">WhatとHow、この両方をちゃんと決めたときに、あなたのコンテンツ販売が完成していくということになります</p>
+<button class="next" type="button" data-go="c3"><span>次の章 ▶</span><b>埋め方で決める4種類</b></button>
+</section>
+<section class="chap" id="c3" data-title="埋め方で決める4種類">
+<header class="chead"><span class="eyebrow">CHAPTER 03</span><h2>埋め方で決める4種類</h2></header>
+<p>じゃあこのHowの部分で、何を決めたらいいのかっていうのが、だいたいわかったんじゃないですかね。</p>
+<p>もうわかりましたよね。</p>
+<p>そう、この決め方には<b class="rd">4種類</b>あります。</p>
+<div class="cards"><div class="card"><span class="cnum">1</span><div><b>商品のフォーマット</b><span>何で渡すか</span></div></div><div class="card"><span class="cnum">2</span><div><b>販売プラットフォーム</b><span>どこで売るか</span></div></div><div class="card"><span class="cnum">3</span><div><b>労力と知識の境界線</b><span>どこまで関与するか</span></div></div><div class="card"><span class="cnum">4</span><div><b>価格</b><span>いくらで売るか</span></div></div></div>
+<p>それが1、商品のフォーマット、2、販売プラットフォーム、3、労力と知識の境界線、4、価格。これについて実際に決めないといけません。</p>
+<p>この4つだけは決める必要があります。</p>
+<p>ただし、商品のフォーマット、販売プラットフォーム、労力と知識の境界線、価格なんですけれども、この後半の③と④に関しては、</p>
+<p><mark class="mk">すぐに決める必要はありません</mark>。</p>
+<p>境界線と価格については、だいぶ後で決めてもらって大丈夫です。理由は後ほど説明しますね。</p>
+<p>では順番にお話をしていきましょう。</p>
+<button class="next" type="button" data-go="c4"><span>次の章 ▶</span><b>①商品のフォーマットを決める</b></button>
+</section>
+<section class="chap" id="c4" data-title="①商品のフォーマットを決める">
+<header class="chead"><span class="eyebrow">CHAPTER 04</span><h2>①商品のフォーマットを決める</h2></header>
+<p>まず一つ目、<span class="bg">商品のフォーマット</span>を決めるということですね。</p>
+<p>これは音声なのか動画なのか記事なのか、みたいなところですね。</p>
+<p>さらにもう少し細かく言うと、音声で販売するのか、動画なのか、記事なのかPDFなのか、それともWebアプリとかのツールなのか、個別相談なのか。</p>
+<p>つまり、<mark class="mk">何で渡すか</mark>の部分になっていきます。</p>
+<h3 id="c4-1" data-sub="決める基準は「最短で約束の地点へ」">決める基準は「最短で約束の地点へ」</h3>
+<p>この決める基準は何なのかと思うじゃないですかね。</p>
+<p class="big">約束の地点に<b class="rd">一番早くたどり着ける形</b>は何なのかで決めてください</p>
+<p>約束の地点に最短で行く方法は何なのかを決めてください。<b class="rd">好みで選ぶ場面ではありません</b>。</p>
+<p>僕は記事がいいから記事で販売しようとか、そういう話ではありませんので、気をつけてくださいね。</p>
+<p>フォーマットなんて別に文章でいいじゃん、とか、別にAIで記事を書かせれば売れるじゃん、みたいに思うかもしれません。</p>
+<p>でもそう思う方は、ちょっと甘いですね。</p>
+<p>これだけではいけません。</p>
+<h3 id="c4-2" data-sub="なぜレオは1ヶ月で2000万円売れたのか">なぜレオは1ヶ月で2000万円売れたのか</h3>
+<p>さてここで、皆さんに一つ質問してみましょう。</p>
+<p>なぜレオはThreadsで市場初のコンテンツを売って、誰もまだThreadsで一切noteとか何も販売していない状態だったのに、</p>
+<p>アカウント開設1ヶ月で<b class="rd">2000万円</b>も売り上げることができたのでしょうか。ちょっと考えてみてください。</p>
+<p>しかも当時Threadsでは、AI発信者っていうのは誰一人いませんでした。</p>
+<p>僕以外はいませんでした。</p>
+<p>もしかしたらいたかもしれないんですけれども、僕が気づいてない可能性もあります。</p>
+<p>ただ、リサーチしても出てこないってことは、それだけあんまり伸びてなかった可能性が高いですよね。</p>
+<p>むしろ「私はAIなんて絶対に使わない」みたいなものが主流の考えでした。それがThreadsでしたね。</p>
+<p>このどこの誰もがわからない、怪しさ満載の僕が、なぜ一人で市場を作れたのでしょうか。ちょっと考えてみましょう。</p>
+<p class="big">実はこのフォーマットというので、すでに僕が勝っていたからなんですよね</p>
+<p>市場で勝つことができていたから。ここに全ての答えがあります。</p>
+<p>そう、皆さん知っての通り、僕は教材の9割を<mark class="mk">動画解説</mark>にしたんです。そう、動画というフォーマットにしただけなんですよね。</p>
+<p>誰一人やりたがらない、誰もやろうとはしない、画面共有での動画解説。これを僕は徹底的にやっていきました。</p>
+<p>動画解説をしたことが、爆発的な成功のきっかけとなったわけです。</p>
+<p>当時はChatGPTのログインすらできない、プロンプトって何、チャットって何をすればいいの、Googleアカウントでいいの、</p>
+<p>みたいな人たちが9割以上でした。</p>
+<p>そんな人に記事だけで解説するのは、さすがに不誠実ですよね。使い方がわからないのに、記事だけでやろうとしたら、解説って不十分じゃないですか。</p>
+<p>みんなが僕と同じ画面を見て、僕と同じ動きをして、まったく同じボタンを押せば、AIを使いこなせるようにしたというだけなんですよ。</p>
+<p>その結果、<mark class="mk">AIといえばレオさん</mark>というブランディングが出来上がりました。</p>
+<p>2年経った今ですら購入してくれる人がたくさんいますので、それだけの魅力があったと言えるでしょう。</p>
+<h3 id="c4-3" data-sub="値段ではなく、形式で選ばれた">値段ではなく、形式で選ばれた</h3>
+<p>しかも皆さん、どっちを買うかで迷ってた人も結構多かったらしいんですよ。</p>
+<p>例えば他のAI発信者の記事があって、さらにレオという動画解説の教材があった場合に、皆さんはたとえ僕の教材が4万円っていうめっちゃ高かったとしても、</p>
+<p>絶対僕から買うと決めていたそうです。</p>
+<p>つまり値段じゃなかったんですね。</p>
+<p class="big">値段より、<b class="rd">プラットフォームの形式</b>によって、僕が選ばれたということになります</p>
+<h3 id="c4-4" data-sub="動画が長期的に強い理由">動画が長期的に強い理由</h3>
+<p>記事なのか動画なのか、皆さんこれを考えたときに、一番良いのは長期的に売り上げにつながるような動画になります。</p>
+<p>なぜなら、<mark class="mk">ライバルがパクりづらい</mark>からです。</p>
+<p>そう、動画ってパクられづらいじゃないですか。そのまま動画を使うわけにはいきませんよね。</p>
+<p>なのでAIの解説って、記事で売るのは確かにすごく簡単で売りやすいんですけど、動画の方が長期的に売り上げになるわけですね。</p>
+<p>あとちょっと有名な話ではあるんですけれども、1分間の動画の情報量って、文字の<mark class="mk">3600ページ分</mark>あるらしいんですよね。</p>
+<p>語数で言うと約180万語あるらしいです。</p>
+<p>なのでそのぐらいに相当するので、動画の方が教育しやすいんですよね。</p>
+<p>だから相手の脳の長期記憶に、1年後も僕が残り続けるということ。レオという人物を忘れることは、そんな簡単じゃないんじゃないかなというふうに思いますね。</p>
+<h3 id="c4-5" data-sub="今ならアプリが喜ばれる">今ならアプリが喜ばれる</h3>
+<p>ちなみに今の時代なら、この動画とか記事とかよりも、もっと簡単に作れて、お客様に喜ばれる方法があるんですよ。</p>
+<p>これ皆さん何かわかりますかね。</p>
+<p class="big">それは<b class="rd">自分事ができるアプリ</b>なんですね</p>
+<p>自分専用に使えるアプリとか、自分のテーマに合わせて解決してくれるアプリとか、自分でも同じような動きができるアプリとか。</p>
+<p>こういったものがめちゃめちゃ喜ばれます。</p>
+<p>例えば、自分の習慣に合わせてダイエット法を管理してくれるアプリとか、冷蔵庫の中身に合わせて料理レシピを作ってくれるようなアプリ。</p>
+<p>これでも十分売れるんですよ。これでもコンテンツ販売が完成するということ。</p>
+<p>実際にアプリを作って、料理アプリとかで<mark class="mk">100万円を超えている人</mark>も、結構見かけたりしますね。</p>
+<p>これはもはや、CodexとかClaude Codeとかで、皆さんは10分あれば作れちゃいますよね。</p>
+<p>ちょっと慣れは必要なんですけれども、10分あれば普通に100万円とか超えるような世界線なんですよ。</p>
+<p>完成したらそのお客さんに渡して、noteとかで販売して、それだけでOKですね。何倍も価値があるものに変わります。</p>
+<p>お客さんも喜んでくれる。</p>
+<p>だからね、コンテンツ販売って、コンテンツを売ることにこだわるのではなくて、どうやったら<mark class="mk">最短で相手のプロミスを満たす</mark>ことができるのかを考えた方が早い。</p>
+<p>そう、そのお客様のギャップを埋める最短のコースは、って考えてみてください。僕の場合は、画面共有が一番手っ取り早く、一番満足度が高かったんですね。</p>
+<p>別に記事とか動画に限った話ではありません。</p>
+<p>もう皆さんがアプリとか作って、Claudeに「○○のアプリ作って」って言って、それを作ってもらって、欲しいターゲットに置いておくだけなんですね。</p>
+<p>これだけで売れてしまいます。</p>
+<h3 id="c4-6" data-sub="フォーマットのまとめ">フォーマットのまとめ</h3>
+<p>さて、販売形式の説明だけで、結構長くなっちゃったんですけれども、ちょっとまとめていきましょうか。</p>
+<p>このフォーマットについてなんですけれども、お客さんの成果とかなりたい理想像によって、適切な販売形式を考えてください。</p>
+<p>記事なのか動画なのかPDFなのかアプリなのかを考えて、そして教育のしやすさは、やっぱり形式によって結構変わったりします。</p>
+<p>僕の場合は、動画の方が教育しやすかった。そして、お客さんの悩みに最短でアプローチできる方法を考えてください。</p>
+<p>今で言えばAIで簡単にアプリを作れるので、もうAIで作ったアプリをそのまま渡してあげればいいかなというふうに思います。</p>
+<button class="next" type="button" data-go="c5"><span>次の章 ▶</span><b>②販売プラットフォームを決める</b></button>
+</section>
+<section class="chap" id="c5" data-title="②販売プラットフォームを決める">
+<header class="chead"><span class="eyebrow">CHAPTER 05</span><h2>②販売プラットフォームを決める</h2></header>
+<p>では次の話に移っていきましょう。</p>
+<p>2つ目、<span class="bg">販売プラットフォーム</span>を決める。つまりこれは、<mark class="mk">どこで売るか</mark>を決めるということです。</p>
+<p>note、ココナラ、自分のサイト、LINE、オープンチャット、いろいろプラットフォームありますよね。</p>
+<p>この中のどこで自分の商品を売っていくかということになりますね。</p>
+<p>つまり販売媒体ですね。</p>
+<p>そしてこの販売のプラットフォームには、2つのタイプがあります。これなんとなくわかるんじゃないかなと思うんですけれども、</p>
+<p>自分の商品を<mark class="mk">販売するため</mark>のプラットフォームと、自分の商品を<mark class="mk">認知するため</mark>のプラットフォーム。この2つに分かれていきます。</p>
+<p>簡単にまとめるとこうなります。</p>
+<div class="tbl"><table><tr><th>タイプ</th><th>役割</th><th>例</th></tr><tr><td>販売するため</td><td>商品を売る</td><td>note、ココナラ、WordPress</td></tr><tr><td>認知するため</td><td>商品を知ってもらう</td><td>Threads、インスタグラム、TikTok、オープンチャット</td></tr></table></div>
+<p>販売するためのプラットフォームっていうのは、note、ココナラ、WordPressとか。</p>
+<p>認知するためのプラットフォームっていうのは、皆さん知っての通り、Threads、インスタグラム、TikTok、オープンチャットとか、</p>
+<p>こういったものです。</p>
+<p>Threadsだけやっても商品売れないじゃないですか。絶対noteとかが必要になってきますよね。</p>
+<p>このように分かれていきます。</p>
+<p>考え方によってはnoteなどのプラットフォームっていうのは、両立するプラットフォームとも言えますね。</p>
+<p>何でかっていうと、note上で集客して、note上から誰かが検索して認知されて買われる可能性も十分ありますので。</p>
+<p>でもそれだけだと足りないじゃないですか。売り上げが足りないから、noteプラスThreadsなどのSNSと合わせる必要があるということですね。</p>
+<p>でもまあここまでいろいろ説明しましたけれども、ついてこれてますでしょうか。</p>
+<p>ここまでよろしいですか。</p>
+<h3 id="c5-1" data-sub="最適な流れはこの1つだけ">最適な流れはこの1つだけ</h3>
+<p>じゃあちょっと今回の動画のタイトルを思い出してみてください。</p>
+<p>さてこの動画はThreads×コンテンツ販売で、月10万円を余裕で超える方法でしたね。</p>
+<p>覚えてますか。</p>
+<p>ではその場合、一番最適なプラットフォームは何でしょうか。</p>
+<p>まあちょっと答え言ってますけれども、Threadsで集客してサクッと10万円を超える方法なんで、この方法一択なんですよね。</p>
+<ol class="flow"><li>Threadsで集客する</li><li>公式LINEでお客さんを絞る</li><li>noteで販売する</li></ol>
+<p class="big">Threadsで集客して、公式LINE上でnoteを販売する。もうこれだけなんですよ</p>
+<p>これが一番の最先端というか、一番やりやすい方法になります。</p>
+<p>これ以上にシンプルでわかりやすい方法はないと思います。そして一番再現性が高いかなというふうに思います。</p>
+<p>これは皆さんご想像の通りでしょう。</p>
+<p>つまりThreadsで集客をして、公式LINEでお客さんを絞って、プラットフォームを絞っていって、その次にnoteで販売する。</p>
+<p>これさえあれば月10万円余裕で超えますので安心してください。</p>
+<p>ただ、必ずね、<b class="rd">公式LINEだけは持っておいてください</b>。僕が言いたいのは、公式LINEだけは先に作っておけということです。</p>
+<button class="next" type="button" data-go="c6"><span>次の章 ▶</span><b>公式LINEを選びオプチャを避ける理由</b></button>
+</section>
+<section class="chap" id="c6" data-title="公式LINEを選びオプチャを避ける理由">
+<header class="chead"><span class="eyebrow">CHAPTER 06</span><h2>公式LINEを選びオプチャを避ける理由</h2></header>
+<p>さてここで皆さんが疑問に思うものがあると思うんですけれども、さて何でしょうか。</p>
+<p>オープンチャットで集客した方がいいんじゃないのって、思いませんでしたか？そう、なんで公式LINEなのって思いますよね。</p>
+<p class="big">オープンチャットはお勧めできません。特に初心者こそ、<b class="rd">オプチャで売ることは絶対にしないでください</b></p>
+<p>理由はたくさんあります。</p>
+<div class="cards"><div class="card"><span class="cnum">1</span><div><b>無駄な通知が多い</b><span></span></div></div><div class="card"><span class="cnum">2</span><div><b>嫉妬したライバルが営業妨害をする</b><span></span></div></div><div class="card"><span class="cnum">3</span><div><b>お客さんの管理ができない</b><span></span></div></div><div class="card"><span class="cnum">4</span><div><b>データ分析ができない</b><span></span></div></div><div class="card"><span class="cnum">5</span><div><b>個別の質問の機会がない</b><span></span></div></div></div>
+<p>1つ目、単純に無駄な通知が多い。2つ目、嫉妬したライバルが営業妨害をする。3つ目、お客さんの管理ができない。</p>
+<p>4つ目、データ分析ができない。5つ目、個別の質問の機会がない。</p>
+<p>この機会損失がめちゃめちゃ多いんですよ。まだあと5個ぐらいあるんですけれども、</p>
+<p>オプチャ運営って、<mark class="mk">売り上げを下げるようなもの</mark>なんですね。なのでいろんなデメリットがあるので、十分注意をしてください。</p>
+<p>ちなみにですが、SNSで広告して、そこからオープンチャットにつなげるのは、一番信頼を損なう方法なので、絶対やめておきましょう。</p>
+<p>たまに見かけるんですよ。</p>
+<p>SNSで広告してめちゃめちゃ稼いだって言って、その後にLPに飛ばして、オープンチャットに飛ばすみたいなことがあるんですけれども、</p>
+<p>これだけはやらないでくださいね。</p>
+<p><b class="rd">一番売り上げ下がります</b>。</p>
+<p>ではもう少し解説をしていきましょう。</p>
+<h3 id="c6-1" data-sub="デメリット1　無駄な通知が多い">デメリット1　無駄な通知が多い</h3>
+<p>一つ目、無駄な通知が多いということ。これは言うまでもないですね。</p>
+<p>人が多くなるほど、たくさんの人がオープンチャットで自由に発言できますよね。そうすると、本来伝えたい管理者の内容が、すぐに流れていきますね。</p>
+<p>皆さんストレスが溜まっていく。しかも深夜にたくさんの通知が増えたら、それはもう解約者も増えますよね。</p>
+<h3 id="c6-2" data-sub="デメリット2　嫉妬したライバルが営業妨害をする">デメリット2　嫉妬したライバルが営業妨害をする</h3>
+<p>じゃあその次、2つ目なんですけれども、嫉妬したライバルが営業妨害をするっていうのは、結構あります。</p>
+<p>これはよく見かける現象じゃないですかね。</p>
+<p>オプチャの人数が多かったり、売り上げがすごそうな人を発見すると、嫉妬する人がやっぱり出てきます。</p>
+<p>そう、なぜならその人たちは、リサーチ目的でオプチャに入ったりとか、戦略を奪いたいから入っているような人たちが多いんですね。</p>
+<p>でもリサーチしているうちに、どうしても妨害したくなったりとか、これ以上その人の売り上げを増やしたくないと思うから、</p>
+<p>みんなの前でコンテンツを批判するという行為が、結構見受けられるんですね。</p>
+<h3 id="c6-3" data-sub="デメリット3　お客さんの管理ができない">デメリット3　お客さんの管理ができない</h3>
+<p>その次3つ目なんですけれども、お客さんの管理ができないっていうのが、オープンチャットのデメリット。</p>
+<p>そしてマーケティングでは、これがもう、とんでもなく一番の損失なんですね。</p>
+<p>皆さんも一度は聞いたことがあるでしょう。<mark class="mk">リストマーケティングが命</mark>だって、聞いたことありませんかね。</p>
+<p>そう、その言葉もあるように、お客さんの名前がわからない、クリック数がわからない、登録日がわからない、反応数がわからない。</p>
+<p>こういった何もかもわからない状態っていうのは、<b class="rd">致命的</b>なんですね。</p>
+<p>公式LINEの場合なら全部管理できますからね。そう、オプチャはわからないけど、公式LINEだったら全部わかります。</p>
+<p>もうこのようなデメリットが多いので、お客さんの情報が見えないとか、誰でも匿名で参加できるとか、簡単に荒らすことができるようなオプチャっていうのは、</p>
+<p>デメリットが多いということですね。</p>
+<p>そう、このデメリットが多いオプチャの運用って、売り上げにはやっぱり直結しづらいかなというふうに思います。</p>
+<p>お客さんからしたら、公式LINEよりオプチャの方が参加しやすいんじゃないかなって思うかもしれません。</p>
+<p>でもそれは逆なんですよ。</p>
+<p>公式LINEだったらちょっと怪しさ増すっていうお客さんもいるかもしれないんですけど、むしろ逆の発想なんです。</p>
+<p>実は公式LINEっていう簡単な単語だけで、怪しいって感じる人をお客さんにする方が問題なんですよ。</p>
+<p>公式LINEなんだか怪しそうって思うお客さんを、お客さんにしたいですか？皆さんはなんとなく、もう答えが分かっているはずです。</p>
+<h3 id="c6-4" data-sub="デメリット4　データ分析ができない">デメリット4　データ分析ができない</h3>
+<p>では4つ目のデメリットについてなんですけれども、データ分析ができないということですね。これは僕が今説明した内容とほぼ同じです。</p>
+<p>いつ登録したのか、誰が入ったのか、昨日の配信はちゃんとクリックして閲覧したのか、個別で何の話をしたのか、チャットができるのか、</p>
+<p>アンケートをちゃんと見たのか、みたいなデータ分析がオプチャの場合はできません。</p>
+<p>じゃあ公式LINEだったらこういうのが見れるっていうのはわかったと。</p>
+<p>じゃあ公式LINEでこういったデータを見れるからといっても、売上に関係あるのって思われそうじゃないですか。</p>
+<p>まず思う人もいるかもしれません。</p>
+<p>でもこのデータさえわかれば、<mark class="mk">誰が興味があるのか</mark>っていうのがわかるから、ちゃんとその人、ターゲットに向けてセールスが何回もできるんですよ。</p>
+<p>だから売り上げめちゃめちゃ増えます。詳しくは後ほど説明をしていきましょう。</p>
+<h3 id="c6-5" data-sub="デメリット5　個別に質問ができない">デメリット5　個別に質問ができない</h3>
+<p>最後5つ目なんですけれども、オプチャのデメリット5つ目は、個別に質問ができないということ。このデメリットはめっちゃすごいですね。</p>
+<p>例えば悩みを相談したいのに、みんなに公開されてしまうとか、教材の質問したいのに個別に質問できる機会がないって思われたら、</p>
+<p>単純に売り上げ下がりますよね。</p>
+<p>コンテンツ販売を長く続けていくとわかりますが、購入しようか迷っている人たちの質問を取りこぼすっていうのは、<mark class="mk">売り上げを取りこぼしているのと同じ</mark>です。</p>
+<p>一番購入意欲が高い人って、結構すぐにですね、質問くるんですよ。でもそういった機会がなかったら、売り上げ下がっていくわけです。</p>
+<p class="big">ということで皆さん、<b class="rd">今すぐ公式LINEを今すぐ作ってください</b></p>
+<p>公式LINEよくわからないっていう人は、ClaudeにLINEを連携して、Claudeでチャットするだけで、運用法が分かっていきます。</p>
+<p>公式LINEの知識がなくても、公式LINEをClaude上で動かせますので、ぜひやってみてください。</p>
+<p>ここでその解説をすると長くなるので、ここでは詳しくは説明しません。</p>
+<h3 id="c6-6" data-sub="オプチャを避ける理由のまとめ">オプチャを避ける理由のまとめ</h3>
+<p>ここまでの話をちょっと整理してみましょう。どうしてオプチャは避けて公式LINEを利用するのか、ちょっとまとめますね。</p>
+<p>それは単純に、無駄な通知が多いし、ライバルが営業妨害をするし、お客さんの管理がうまくできないし、質問する機会がないからでしたね。</p>
+<button class="next" type="button" data-go="c7"><span>次の章 ▶</span><b>固定ポストにnoteを貼るだけではダメ？</b></button>
+</section>
+<section class="chap" id="c7" data-title="固定ポストにnoteを貼るだけではダメ？">
+<header class="chead"><span class="eyebrow">CHAPTER 07</span><h2>固定ポストにnoteを貼るだけではダメ？</h2></header>
+<p>ここまでわかったけど、こんな疑問がまだ出てきませんかね。</p>
+<p>それはそのままLINEとか経由せずに、Threadsで投稿して集客して、固定ポストにnoteのリンクを貼って、</p>
+<p>それで何回も売れるようにしたらいいんじゃないのって思いませんか？</p>
+<p>LINEとかも作らずに、固定ポストにどんどん流すようにしたらいいんじゃない？</p>
+<p>って思うじゃないですか。</p>
+<p>これについても実は同様なんですよね。noteの購入を待っている人がどのくらいいて、どのくらいの人が検討しているのか、皆さん把握できますか？</p>
+<p>公式LINEがなかった場合、Threadsの固定ポストにどのくらいの人が見たのかって、皆さん分かりますかね？</p>
+<p>この中に一度公式LINEを挟むだけで、<mark class="mk">興味がある人がどのくらいいるのかっていうのがすぐ分析できる</mark>んですよ。</p>
+<p>しかも公式LINEがあれば、こちらからいくらでもアプローチすることができますね。</p>
+<p>まあこれをプッシュ型とか言ったりしますけれども、公式LINEにさえリストがあれば、ずーっとセールスできます。</p>
+<p>さらにちょっと質問を重ねていきましょう。</p>
+<p>Threadsからnoteを購入してくれる人がいるとしたら、その人に次の教材の案内をどうやってしますかって話です。</p>
+<p>もし皆さんのnoteを買ってくれた人がいるとするじゃないですか。でもその人に次のnoteの記事を案内しようとしたら、どうやって案内します？</p>
+<p>できないですよね。</p>
+<p>誰が買ってくれたのかわからないし、お客さんの名前もわからない。</p>
+<p>リストもない状態で、次の教材を確実にターゲットに向けて、どうやって配信できますか。</p>
+<p>どうやって案内しますか。</p>
+<p>できませんよね、難しいです。note上でやろうと思えばできるのはできるんですけれども、ちょっと難しい。</p>
+<p>だから<mark class="mk">公式LINEを持っていて、経由した方が賢い</mark>ということですね。</p>
+<h3 id="c7-1" data-sub="販売プラットフォームのまとめ">販売プラットフォームのまとめ</h3>
+<p>ということでちょっとまとめです。販売プラットフォームについての内容をちょっと解説しました。</p>
+<p>Threadsで集客して、公式LINEでさらに抽出して、noteを販売するということですね。</p>
+<ol class="flow"><li>ThreadsからLINEに飛ばす</li><li>LINEからnoteに飛ばす</li></ol>
+<p>この流れを理解しておいてください。</p>
+<button class="next" type="button" data-go="c8"><span>次の章 ▶</span><b>①②は早く、③④は後でいい理由</b></button>
+</section>
+<section class="chap" id="c8" data-title="①②は早く、③④は後でいい理由">
+<header class="chead"><span class="eyebrow">CHAPTER 08</span><h2>①②は早く、③④は後でいい理由</h2></header>
+<p>さてさて、ここまでで2つ説明しました。</p>
+<p>商品のフォーマットを決めることについて前半話して、今は販売プラットフォームを決めるということについて解説をしました。</p>
+<p>最初の方に戻るんですけれども、商品のフォーマットを決める、そして販売プラットフォームを決める、そして後半、労力と知識の境界線を決めて、</p>
+<p>価格を決めるっていうことも僕ちょっと言ったんですけど、覚えてますかね。</p>
+<p>ギャップの埋め方は合計で4つですねって話しましたよね。で今僕が話したのは、そのうちの前半の2つを説明しただけになります。</p>
+<p>そしてこれからは3つ目の、労力と知識の境界線を決めるっていうのと、4つ目の価格を決めるっていうのと、これらの2つを決めていきましょう。</p>
+<p>ただ、ここで注意してほしいことがあります。商品のフォーマットを決める、販売プラットフォームを決める、この2つ説明したんですけれども、</p>
+<p class="big">この2つは、<b class="rd">できるだけ早めに決めておいてください</b></p>
+<p>いいですか。</p>
+<p>この2つはできるだけ早めに決めましょう。今からちょっと理由を説明します。</p>
+<h3 id="c8-1" data-sub="フォーマットを早く決める理由">フォーマットを早く決める理由</h3>
+<p>商品のフォーマットについてなんですけれども、後でね、商品のフォーマットを変えるっていうのが難しいんですよ。</p>
+<p><mark class="mk">ほぼ不可能</mark>なんですよ。</p>
+<p>例えば商品のフォーマット、じゃあ動画で売ろうかなと思った時に、動画皆さんたくさん作るじゃないですか。</p>
+<p>動画をたくさん作っている途中で、やっぱりちょっと疲れたなとか、これ以上ちょっと動画で解説するの難しいなとか、やっぱり記事を売りたいってなった時に、</p>
+<p>残りだけ手抜き感が出てしまいますよね。</p>
+<p>中途半端に動画、中途半端に記事だと、なんか手抜き感あると感じませんか。で、投げやりになってしまう可能性が非常に高いんですね。</p>
+<h3 id="c8-2" data-sub="プラットフォームを早く決める理由">プラットフォームを早く決める理由</h3>
+<p>次にプラットフォームについてなんですけれども、なぜ先に決めるのかっていうのは、流れが基本的に一択なんですよね。</p>
+<p>最初のうちは、ThreadsからLINE、note販売、この流れでとにかくやっていくしかない。</p>
+<p>逆に販売のプラットフォームを、LINEから別のやつに飛ばしたりとか、インスタに行ったりTikTokに行ったりすると、</p>
+<p>自分の労力が分散されてしまいます。</p>
+<p>なのでこれが最もシンプルかつ、売り上げが上がる方法なので、プラットフォームの販売の仕方はシンプルで、これだけでOKなんですよ。</p>
+<p>最短で月10万円稼ぐなら、この流れを徹底的に行ってください。</p>
+<p>だからこの流れを先に決めておいて、これに注力する必要があるということですね。</p>
+<p>ここにリソースを割いて売り上げが増えてから、後からインスタとかTikTokとかに展開するのがオススメ。</p>
+<p>クロスメディアとして影響力を増やしていくのがオススメですね。</p>
+<p>なのでこの2つ、商品のフォーマットを決める、販売プラットフォームを決めるっていうのは、できるだけ早めに決めておきましょうね。</p>
+<p>じゃあその上で残りの2つはどうなるのか。</p>
+<p>労力と知識の境界線を決めるっていうのと、価格を決めるっていうのは、この2つは<mark class="mk">商品が完成する前ぐらい</mark>に決定するようにしてください。</p>
+<p>ではそれがどういうことなのかっていうのを、ちょっとこれからお話をしていきます。</p>
+<p>ていうか、そもそも労力と知識の境界線どういうことってまだ話してなかったので、これについてもちょっとお話をしていきましょう。</p>
+<button class="next" type="button" data-go="c9"><span>次の章 ▶</span><b>③労力と知識の境界線を決める</b></button>
+</section>
+<section class="chap" id="c9" data-title="③労力と知識の境界線を決める">
+<header class="chead"><span class="eyebrow">CHAPTER 09</span><h2>③労力と知識の境界線を決める</h2></header>
+<p>ということで今からはですね、この3つ目の<span class="bg">労力と知識の境界線</span>についてお話をしていきましょう。</p>
+<p>この労力と知識の境界線が3つ目です。これはどこまであなたがこのビジネスに関与するのか、ということになります。</p>
+<p>自分がどこまでその商品に関与して、サポートしたりするのかを決めていくわけですね。この境界線を決めてください。</p>
+<p>例えば、コンサルをするのか、講座として商品を売るのか、どのくらいの期間でサポートをしていくのか、カウンセリングをするのか、</p>
+<p>そもそもアドバイスが必要な分野なのか、そしてアップデートはどのくらいするのか。</p>
+<p>これアップロードって書いてますけど、正しくはアップデートですね。アップデートはしていくのか。</p>
+<p>このようにですね、自分がどこまで手作業とか労力を使って、時間を割いてやっていくのかということになります。</p>
+<p>こういったことを見極めて決めていってください。</p>
+<p>つまり、<mark class="mk">知識を売る</mark>のがメインなのか、もしくは<mark class="mk">自分の労力を売って自分を商品にする</mark>ようなものなのか、どっちかになりますね。</p>
+<div class="cards"><div class="card"><span class="cnum">知</span><div><b>知識を売る</b><span>知識を売るのがメインのコンテンツ</span></div></div><div class="card"><span class="cnum">労</span><div><b>労力を売る</b><span>労力を売るのがメインのコンテンツ</span></div></div></div>
+<p>あなたはどっちですかって話ですね。この分岐点を作りなさいということですね。</p>
+<p>知識だけ言ってもオリジナル性少ないから、どこかで人間を挟んだ方がいいし、かといって自分がずーっとずーっと永久にサポートし続けても、</p>
+<p>時間も体力も足りないじゃないですか。</p>
+<p>このバランスちゃんと自分で考えましょう。</p>
+<p>この境界線は、自分のスキルとか経験とか時間によって範囲が変わっていきますので、自分自身と相談してみてください。</p>
+<h3 id="c9-1" data-sub="一番負担が少なく売り上げを増やす形">一番負担が少なく売り上げを増やす形</h3>
+<p>もし一番負担が少なく売り上げを増やしたいっていうのであれば、僕のオススメのものがあります。</p>
+<p>それは、<mark class="mk">商品のサポートは一切つけずに、その代わり定期更新をして、お客さんの満足度を上げる</mark>のがいいですね。</p>
+<p>つまり、商品を売った後もアップデートし続けるというのが一番やりやすい形になります。</p>
+<p>この方法がクレームも少なく、部数も多く売りやすい、さらにお客さんの満足度が高い形になっていきます。</p>
+<h3 id="c9-2" data-sub="なぜ早く決めなくていいのか">なぜ早く決めなくていいのか</h3>
+<p>ただしここで重要なことを言いましょう。先ほどの話を思い出してみてください。</p>
+<p>労力と知識の境界線って、商品が完成する前ぐらいに決定してくださいと、僕は言いました、覚えてますかね。</p>
+<p>なぜこれは、なるべく早く決める必要がないのでしょうか。</p>
+<p>なぜなら、その時期のトレンドとかAIの進化によって、<mark class="mk">サポートが不要になるケース</mark>が結構あるんですよ。</p>
+<p>例えばの話、料理教室っていうアカウントを運用して、あなたが料理教室を販売したいという風になったとします。</p>
+<p>ただこの場合、半年前までは自分で料理の方法を個別に指導できていたけど、AIが普及しすぎて、もうAIでアプリを使って、</p>
+<p>今まで自分が作った料理とかもAIにすべて打ち込んでアプリにして皆さんに渡した方が早い、っていうことに気づいたみたいな、なんてこともありますよね。</p>
+<p>そうなので、料理の講座として直接教えようと思ってたけど、その必要がなくなったと。</p>
+<p>そしてむしろ自分の時間が足りなくなった、なんてことになりかねないですよね。</p>
+<p>もしやっぱりサポートできるかな、もう少しサポートつけたいなって思ったら、note記事を販売する数日前に、</p>
+<p>やっぱり○○に関しては何日間サポートしますとか、この料理についてはサポートしますとか、このように販売前にちょっと付け足せればOKです。</p>
+<p>なのでこの境界線は、後ほど自分のスケジュールとかスキルとかと相談しながら変更してみてください。</p>
+<p>なのですぐに決める必要はないということ。</p>
+<button class="next" type="button" data-go="c10"><span>次の章 ▶</span><b>④価格を決める</b></button>
+</section>
+<section class="chap" id="c10" data-title="④価格を決める">
+<header class="chead"><span class="eyebrow">CHAPTER 10</span><h2>④価格を決める</h2></header>
+<p>ではここまで3つお話をしました。では最後にですね、ギャップを埋めるための商品の<span class="bg">価格</span>についてお話をしていきましょう。</p>
+<p>ということで最後4つ目、価格。どのくらいの値段で売るのかということ。どのくらいの値段で誰に、どのくらいの単価で売るのかっていうこと。</p>
+<p>これを決めてください。</p>
+<p>そしてこれに関しても、<mark class="mk">最初から価格を決める必要はございません</mark>。</p>
+<p>いいですか、簡単な話なんですけど、このようなケースがあるので、すぐに価格を決める必要はないということを、どういうことかというと、</p>
+<p>商品を作っている間に、ライバルが同じようなテーマのnote記事を出したと。そして安く販売していったということもありますよね。</p>
+<p>しかも商品を作っている間に、やっぱりこのボリュームだと値段合わないなっていうことに気づいたりしませんか。</p>
+<p>だから最初に価格を決めてしまうと、後々厄介なことが起きてしまうんですよ。そう、こういったケースがよく起きるから、やめておいてください。</p>
+<h3 id="c10-1" data-sub="安ければいいわけではない">安ければいいわけではない</h3>
+<p>もちろんなんですが、価格が安ければいいというわけではありません。</p>
+<p>後々どんどん安ければいいかなーって思ったりする人もいると思うんですけど、でもそれは違うんですね。</p>
+<p>僕の事例を見て皆さんも気づいていると思うんですけど、レオの商品はすべて<mark class="mk">3万円から5万円ぐらい</mark>なんですよ、すべて単価は高いですね。</p>
+<p>それなのに100円noteに負けないくらい、部数がめちゃめちゃ売れているわけなんですよ。</p>
+<p>じゃあなぜそんなに売れているのかというと、価格の安さではありません。</p>
+<p><mark class="mk">価格に対する価値が妥当であるとフォロワーが判断している</mark>からです。</p>
+<p>つまり、どのくらいの値段が売れやすいのかを考えてはいけないんですね。</p>
+<p>そうではなくて、市場の需要とか、商品価値に対する値段が釣り合っているのか、この値段は適正なのかを考えていきましょう。</p>
+<p>たとえ500円のワンコインで買えるnoteでも、価値がないと思われたら、<b class="rd">口コミは絶対起きません</b>。</p>
+<p>さらにその次の記事が買われることは、もう二度とありえません。</p>
+<p>そんな感じになります。</p>
+<p>だからこそ商品の価格は、自分の商品が完成しそうな時に、改めて考え直してください。</p>
+<p>いいですか、商品の価格何円で売るのかっていうのは、自分の商品を売る直前ぐらいに、もう一度改めるぐらいに考えておいてください。</p>
+<p>実際の価格の決め方っていうのは別のところでお話ししますので、じゃあどのくらいの値段設定がいいのか、どんな方法があるのかっていうのは、</p>
+<p>別のところでお話をしていきます。</p>
+<button class="next" type="button" data-go="c11"><span>次の章 ▶</span><b>まとめと次回予告</b></button>
+</section>
+<section class="chap" id="c11" data-title="まとめと次回予告">
+<header class="chead"><span class="eyebrow">CHAPTER 11</span><h2>まとめと次回予告</h2></header>
+<p>ではでは、ここまでね4つの要素をお話をしてきましたね。</p>
+<div class="cards"><div class="card"><span class="cnum">1</span><div><b>商品のフォーマット</b><span>何で渡すか</span></div></div><div class="card"><span class="cnum">2</span><div><b>販売プラットフォーム</b><span>どこで売るか</span></div></div><div class="card"><span class="cnum">3</span><div><b>労力と知識の境界線</b><span>どこまで関与するか</span></div></div><div class="card"><span class="cnum">4</span><div><b>価格</b><span>いくらで売るか</span></div></div></div>
+<p>商品のフォーマット、販売プラットフォーム、労力と知識の境界線、最後に価格。この4つについて僕は今この要素をお話ししましたね。</p>
+<p>このギャップを埋める方法について、解説をたくさんしてきました。</p>
+<p>おさらいですが、ビジネスとはギャップを埋める商売のことでしたよね。</p>
+<p>1本能を決める、2緊急性を決める、3範囲を決めるというギャップは、すべて何を解決するかの分野でした。</p>
+<p>つまりワットの部分でしたね。</p>
+<p>そして今回さらに説明したこの4つ、このギャップの埋め方については、どうやって解決するかの分野でしたね。</p>
+<p>どの形式で売るのか、どの販売先で売るのか、いくらで売るのか、みたいなものは、つまりすべてハウの部分になります。</p>
+<p>ちなみに「いくらで」っていうのは「How much」の「How」のことなんで、ちゃんと「How」の部分に入ります。</p>
+<div class="tbl"><table><tr><th></th><th>What</th><th>How</th></tr><tr><td>問い</td><td>何を解決するか</td><td>どうやって解決するか</td></tr><tr><td>決めること</td><td>本能・緊急性・範囲</td><td>フォーマット・プラットフォーム・境界線・価格</td></tr><tr><td>意味</td><td>顧客が持っているギャップは何か</td><td>そのギャップをどうやって埋め、商品をどう売るか</td></tr></table></div>
+<p>だからWhatっていうのは、顧客が持っているギャップは何か。</p>
+<p>Howっていうのは、そのギャップをどうやって埋めていくのか、商品をどういう感じで売っていくのかになります。</p>
+<p>長くなりましたが、これがすべて理解できれば、コンテンツ販売の大雑把なイメージ像っていうのができたと思います。</p>
+<p>今回話した内容は主にコンテンツ販売の基礎みたいなものなので、ぜひ覚えておいてください。</p>
+<p>そして、お客様のゴールへの導き方、何を解決するのか、どうやって解決するのかが、皆さんわかったと思います。</p>
+<p>まあこういった話をしてきました。</p>
+<p class="big">ワットとハウ、これを両方セットで考えてください</p>
+<p>そしていよいよ次からはですね、<mark class="mk">集客</mark>についてのお話をしていきましょう。</p>
+<p>集客が一番難しく聞こえるかもしれませんが、ここまで理解ができていれば、後にとてもスムーズに応用できていきますので、どうぞ安心してください。</p>
+<p>さて次回は、さっそくThreadsでのバズの生み出し方について解説をしていきましょう。</p>
+</section>
+
+  <div class="end">
+    <button class="tbtn" type="button" id="openToc2">目次を開く</button>
+    <button class="tbtn" type="button" id="toTop2">▲ 最初に戻る</button>
+  </div>
+</main>
+
+<div class="ov" id="ov"></div>
+<aside class="drawer" id="drawer" aria-label="章の一覧" aria-hidden="true">
+  <div class="d-head"><b>【目次】</b><button class="tbtn" type="button" id="closeToc" aria-label="閉じる">閉じる</button></div>
+  <div class="d-body"><ul>
+<li data-ch="c1"><button type="button" class="chb" data-go="c1"><span class="tn">01</span><span class="tt">前回のおさらい</span></button></li>
+<li data-ch="c2"><button type="button" class="chb" data-go="c2"><span class="tn">02</span><span class="tt">WhatとHowの違い</span></button></li>
+<li data-ch="c3"><button type="button" class="chb" data-go="c3"><span class="tn">03</span><span class="tt">埋め方で決める4種類</span></button></li>
+<li data-ch="c4"><button type="button" class="chb" data-go="c4"><span class="tn">04</span><span class="tt">①商品のフォーマットを決める</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c4-1">決める基準は「最短で約束の地点へ」</button></li><li><button type="button" class="sub" data-go="c4-2">なぜレオは1ヶ月で2000万円売れたのか</button></li><li><button type="button" class="sub" data-go="c4-3">値段ではなく、形式で選ばれた</button></li><li><button type="button" class="sub" data-go="c4-4">動画が長期的に強い理由</button></li><li><button type="button" class="sub" data-go="c4-5">今ならアプリが喜ばれる</button></li><li><button type="button" class="sub" data-go="c4-6">フォーマットのまとめ</button></li></ul></li>
+<li data-ch="c5"><button type="button" class="chb" data-go="c5"><span class="tn">05</span><span class="tt">②販売プラットフォームを決める</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c5-1">最適な流れはこの1つだけ</button></li></ul></li>
+<li data-ch="c6"><button type="button" class="chb" data-go="c6"><span class="tn">06</span><span class="tt">公式LINEを選びオプチャを避ける理由</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c6-1">デメリット1　無駄な通知が多い</button></li><li><button type="button" class="sub" data-go="c6-2">デメリット2　嫉妬したライバルが営業妨害をする</button></li><li><button type="button" class="sub" data-go="c6-3">デメリット3　お客さんの管理ができない</button></li><li><button type="button" class="sub" data-go="c6-4">デメリット4　データ分析ができない</button></li><li><button type="button" class="sub" data-go="c6-5">デメリット5　個別に質問ができない</button></li><li><button type="button" class="sub" data-go="c6-6">オプチャを避ける理由のまとめ</button></li></ul></li>
+<li data-ch="c7"><button type="button" class="chb" data-go="c7"><span class="tn">07</span><span class="tt">固定ポストにnoteを貼るだけではダメ？</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c7-1">販売プラットフォームのまとめ</button></li></ul></li>
+<li data-ch="c8"><button type="button" class="chb" data-go="c8"><span class="tn">08</span><span class="tt">①②は早く、③④は後でいい理由</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c8-1">フォーマットを早く決める理由</button></li><li><button type="button" class="sub" data-go="c8-2">プラットフォームを早く決める理由</button></li></ul></li>
+<li data-ch="c9"><button type="button" class="chb" data-go="c9"><span class="tn">09</span><span class="tt">③労力と知識の境界線を決める</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c9-1">一番負担が少なく売り上げを増やす形</button></li><li><button type="button" class="sub" data-go="c9-2">なぜ早く決めなくていいのか</button></li></ul></li>
+<li data-ch="c10"><button type="button" class="chb" data-go="c10"><span class="tn">10</span><span class="tt">④価格を決める</span></button><ul class="subs"><li><button type="button" class="sub" data-go="c10-1">安ければいいわけではない</button></li></ul></li>
+<li data-ch="c11"><button type="button" class="chb" data-go="c11"><span class="tn">11</span><span class="tt">まとめと次回予告</span></button></li>
+  </ul></div>
+</aside>
+
+<button class="fab" type="button" id="fab" aria-label="ページの先頭へ"><svg viewBox="0 0 20 20"><path d="M10 16V4M4.5 9.5 10 4l5.5 5.5"/></svg></button>
+<div class="resume" id="resume" role="status"><p id="resumeTxt"></p><div><button type="button" id="resumeNo">最初から読む</button><button type="button" class="pri" id="resumeYes">続きから読む</button></div></div>
+
+<script>
+(function(){
+  var MIN=28;
+  var root=document.documentElement;
+  var $=function(id){return document.getElementById(id)};
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+
+  /* font size */
+  var sizes=[14.5,16.5,18.5,20.5];var si=1;
+  var ss=parseInt(store('cs-fs'),10);if(ss>=0&&ss<sizes.length)si=ss;
+  function applyFs(){root.style.setProperty('--fs',sizes[si]+'px');store('cs-fs',String(si))}
+  applyFs();
+  $('fsDown').addEventListener('click',function(){if(si>0){si--;applyFs()}});
+  $('fsUp').addEventListener('click',function(){if(si<sizes.length-1){si++;applyFs()}});
+
+  /* header height */
+  var top=$('top');
+  function setHH(){root.style.setProperty('--hh',top.offsetHeight+'px')}
+  setHH();window.addEventListener('resize',setHH);
+
+  /* smooth jump */
+  function go(id){
+    var el=$(id);if(!el)return;
+    closeDrawer();
+    var sat=parseFloat(getComputedStyle(root).paddingTop)||0;
+    var y=el.getBoundingClientRect().top+window.pageYOffset-top.offsetHeight-sat-6;
+    window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-go]');
+    if(b){go(b.getAttribute('data-go'))}
+  });
+
+  /* drawer */
+  var drawer=$('drawer'),ov=$('ov');
+  function openDrawer(){drawer.classList.add('on');ov.classList.add('on');drawer.setAttribute('aria-hidden','false');
+    var a=drawer.querySelector('li.active');if(a&&a.scrollIntoView){a.scrollIntoView({block:'center'})}}
+  function closeDrawer(){drawer.classList.remove('on');ov.classList.remove('on');drawer.setAttribute('aria-hidden','true')}
+  $('openToc').addEventListener('click',openDrawer);
+  $('openToc2').addEventListener('click',openDrawer);
+  $('closeToc').addEventListener('click',closeDrawer);
+  ov.addEventListener('click',closeDrawer);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+  function toTop(){window.scrollTo({top:0,behavior:reduce?'auto':'smooth'})}
+  $('fab').addEventListener('click',toTop);
+  $('toTop2').addEventListener('click',toTop);
+
+  /* scroll spy + progress */
+  var chaps=[].slice.call(document.querySelectorAll('.chap'));
+  var lis=[].slice.call(document.querySelectorAll('#drawer li[data-ch]'));
+  var barFill=$('barFill'),nowTitle=$('nowTitle'),nowSub=$('nowSub'),fab=$('fab');
+  var lastIdx=-2,ticking=false,saveT=null;
+  function curIndex(){
+    var line=top.offsetHeight+80,idx=-1;
+    for(var i=0;i<chaps.length;i++){if(chaps[i].getBoundingClientRect().top<=line)idx=i;else break}
+    return idx;
+  }
+  function update(){
+    ticking=false;
+    var y=window.pageYOffset,max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+    var p=Math.min(1,Math.max(0,y/max));
+    barFill.style.transform='scaleX('+p.toFixed(4)+')';
+    var rem=Math.max(0,Math.ceil(MIN*(1-p)));
+    var idx=curIndex();
+    nowSub.textContent=(idx>=0?'第'+(idx+1)+'章・':'')+Math.round(p*100)+'%・'+(rem>0?'残り約'+rem+'分':'読了');
+    if(idx!==lastIdx){
+      lastIdx=idx;
+      nowTitle.textContent=idx>=0?chaps[idx].getAttribute('data-title'):'コンテンツ販売の埋め方';
+      lis.forEach(function(li,i){li.classList.toggle('active',i===idx)});
+    }
+    fab.classList.toggle('on',y>700);
+    clearTimeout(saveT);saveT=setTimeout(function(){store('cs2-pos',String(Math.round(y)))},400);
+  }
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});
+  window.addEventListener('resize',update);
+  update();
+
+  /* marker draw-in (visible at rest; only off-screen ones animate in) */
+  var mks=[].slice.call(document.querySelectorAll('.mk'));
+  if('IntersectionObserver' in window&&!reduce){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(en){if(en.isIntersecting){en.target.classList.remove('pend');io.unobserve(en.target)}});
+    },{threshold:0.6});
+    mks.forEach(function(m){if(m.getBoundingClientRect().top>window.innerHeight){m.classList.add('pend');io.observe(m)}});
+  }
+
+  /* resume reading */
+  var saved=parseInt(store('cs2-pos'),10);
+  if(saved>900&&window.pageYOffset<200){
+    var ci=-1;
+    for(var i=0;i<chaps.length;i++){if(chaps[i].getBoundingClientRect().top+window.pageYOffset<=saved+top.offsetHeight+80)ci=i}
+    var r=$('resume');
+    $('resumeTxt').textContent='前回は'+(ci>=0?'第'+(ci+1)+'章「'+chaps[ci].getAttribute('data-title')+'」':'途中')+'まで読んでいました。';
+    setTimeout(function(){r.classList.add('on')},500);
+    var hide=function(){r.classList.remove('on')};
+    var hT=setTimeout(hide,12000);
+    $('resumeYes').addEventListener('click',function(){clearTimeout(hT);hide();window.scrollTo({top:saved,behavior:reduce?'auto':'smooth'})});
+    $('resumeNo').addEventListener('click',function(){clearTimeout(hT);hide()});
+  }
+})();
+</script>
+</body>
+</html>
